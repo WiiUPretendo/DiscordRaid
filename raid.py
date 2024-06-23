@@ -16,26 +16,27 @@ async def spam_message(client, message):
                 channel = next((channel for channel in guild.text_channels if channel.permissions_for(guild.me).send_messages), None)
                 if channel:
                     await channel.send(message)
+                    await asyncio.sleep(0)  # Ajusta el tiempo de espera aquí (en segundos)
             except Exception as e:
                 print(f'Error al enviar mensaje en el servidor {guild.name}: {e}')
-        await asyncio.sleep(0)  # Cambia el delay según sea necesario
 
 # Función principal para inicializar el bot
 async def main():
     token, message = get_input()
-    client = discord.Client()
+    intents = discord.Intents.default()
+    client = discord.Client(intents=intents)
 
     @client.event
     async def on_ready():
         print(f'Bot conectado como {client.user}')
         print('Enviando mensaje repetidamente...')
+        await spam_message(client, message)
 
     @client.event
     async def on_disconnect():
         print('Bot desconectado.')
 
     await client.start(token)
-    await spam_message(client, message)
 
 # Ejecutar el programa
 if __name__ == "__main__":
